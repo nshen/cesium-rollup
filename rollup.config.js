@@ -4,7 +4,9 @@ import replace from '@rollup/plugin-replace';
 import copy from 'rollup-plugin-copy';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
+// import typescript from '@rollup/plugin-typescript';
 import serve from 'rollup-plugin-serve';
+import externalGlobals from "rollup-plugin-external-globals";
 
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
@@ -14,17 +16,18 @@ export default {
     input: 'src/index.js',
     external: ['cesium'],
     output: {
-        globals: ['Cesium'],
         file: 'dist/bundle.js',
         format: 'iife', // immediately-invoked function expression — suitable for <script> tags
         sourcemap: true
     },
     plugins: [
         // replace({
-        //     // alternatively, one could pass process.env.NODE_ENV or 'development` to stringify
-        //     // 'process.env.NODE_ENV': JSON.stringify('production'),
-        //     'window.CESIUM_BASE_URL': JSON.stringify('')
+        //     'cesium': 'Cesium'
         // }),
+        // typescript(),
+        externalGlobals({
+            cesium: "Cesium"
+        }),
         copy({
             targets: [
 
@@ -40,7 +43,7 @@ export default {
             copyOnce: true
         }),
         resolve(),
-        commonjs(),
+        // commonjs(),
         !production && serve({
             open: true,
             contentBase: 'dist'
